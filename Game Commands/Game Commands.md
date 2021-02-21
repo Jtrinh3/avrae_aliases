@@ -3,10 +3,10 @@
 !servalias heal embed
 {{set("input", "%1%" if "%1"+"%"!="%1%" else "1")}}
 {{set("heal", vroll(input))}}
-{{set_hp(min(hp, heal.total + currentHp))}}
+{{set_hp(min(hp, heal.total + character().hp))}}
 -title "<name> regains HP!"
 -desc "You are healed for {{input}} hit points."
--f "Hit Points|{{get_hp()}} / {{hp}}"
+-f "Hit Points|{{character().hp_str()}}"
 -f "Healing Done|{{str(heal)}}"
 -thumb <image>
 -color <color>
@@ -20,7 +20,7 @@
 {{set('dieStr', "Hit Dice (" + die + ")")}}
 {{mod_cc(dieStr, -1*int(used), True) if die else 0}}
 {{set("heal", vroll(used+die+"+"+str(constitutionMod*int(used))))}}
-{{set_hp(min(hp, heal.total + currentHp)) if die else 0}}
+{{set_hp(min(hp, heal.total + character().hp)) if die else 0}}
 {{counters=get_raw().consumables.custom}}
 -title "{{(name + ' takes a Short Rest!') if die else 'Hit Dice'}}" 
 -desc "{{get_gvar("8e7251ab-1596-48b0-976d-fdc1ecbbab94")}}"
@@ -69,7 +69,7 @@ E.g.: `!hproll barbarian` or `!hproll monk 2` for 2 levels"
 ## Short Rest
 ```GN
 !servalias sr multiline
-!embed {{ds=" (%2%)" if "%2%" in "d4d6d8d10d12d20" else ""}}{{ds=" (d"+"%1%".split("d")[1]+")" if "d" in "%1%" else ds}}{{cc="Hit Dice"+ds}}{{du=0 if "%1%" == "%1"+"%" or not cc_exists(cc) else int("%1%".split("d")[0]) if "d" in "%1%" else int("%1%")}}{{du=min(get_cc(cc),du) if cc_exists(cc) else 0}}{{mod_cc(cc, -du) if cc_exists(cc) else ""}}{{roll=(str(du)+str(hd if exists("hd") and ds=="" else ds[2:-1]))+"+"+str(du*constitutionMod)}}{{vheal=vroll("0" if du == 0 else roll)}}{{set_hp(min(hp, vheal.total + currentHp))}}{{wlvl=int(WarlockLevel) if exists("WarlockLevel") else 0}}{{splvl=min(ceil(int(wlvl)/2),5)}}{{numSlots=0 if wlvl==0 else 1 if wlvl<= 1 else 2 if wlvl< 11 else 3 if wlvl< 17 else 4}}{{set_slots(splvl, min(numSlots + get_slots(splvl), get_slots_max(splvl))) if wlvl>0 else ""}}{{blvl=int(BardLevel) if exists("BardLevel") else 0}}{{mod_cc("Bardic Inspiration", 10) if blvl>=5 and cc_exists("Bardic Inspiration") else 0}} -title "<name> takes a Short Rest." -desc "<name> spends {{du}}{{"" if ds=="" else " "+ds[2:-1]}} hit die and recovers {{vheal.total}} hit points. {{"They also recover "+str(numSlots)+" Level "+str(splvl)+" spell slots." if wlvl>0 else ""}}" -f "Healing Recieved|{{str(vheal)}}" -f "Current HP: | {{min(hp, (vheal.total+ currentHp))}}/{{hp}}{{set_hp(min(hp, (vheal.total + currentHp)))}}" {{"-f \""+cc+("" if ds else " ("+str(hd)+")")+" | "+cc_str(cc)+"\"" if cc_exists(cc) else ""}} -color <color> -footer "Adventuring | PHB 186" {{"-f \"Spell Slots| "+slots_str(splvl)+"\"" if wlvl>0 else ""}}
+!embed {{ds=" (%2%)" if "%2%" in "d4d6d8d10d12d20" else ""}}{{ds=" (d"+"%1%".split("d")[1]+")" if "d" in "%1%" else ds}}{{cc="Hit Dice"+ds}}{{du=0 if "%1%" == "%1"+"%" or not cc_exists(cc) else int("%1%".split("d")[0]) if "d" in "%1%" else int("%1%")}}{{du=min(get_cc(cc),du) if cc_exists(cc) else 0}}{{mod_cc(cc, -du) if cc_exists(cc) else ""}}{{roll=(str(du)+str(hd if exists("hd") and ds=="" else ds[2:-1]))+"+"+str(du*constitutionMod)}}{{vheal=vroll("0" if du == 0 else roll)}}{{set_hp(min(hp, vheal.total + character().hp))}}{{wlvl=int(WarlockLevel) if exists("WarlockLevel") else 0}}{{splvl=min(ceil(int(wlvl)/2),5)}}{{numSlots=0 if wlvl==0 else 1 if wlvl<= 1 else 2 if wlvl< 11 else 3 if wlvl< 17 else 4}}{{set_slots(splvl, min(numSlots + get_slots(splvl), get_slots_max(splvl))) if wlvl>0 else ""}}{{blvl=int(BardLevel) if exists("BardLevel") else 0}}{{mod_cc("Bardic Inspiration", 10) if blvl>=5 and cc_exists("Bardic Inspiration") else 0}} -title "<name> takes a Short Rest." -desc "<name> spends {{du}}{{"" if ds=="" else " "+ds[2:-1]}} hit die and recovers {{vheal.total}} hit points. {{"They also recover "+str(numSlots)+" Level "+str(splvl)+" spell slots." if wlvl>0 else ""}}" -f "Healing Recieved|{{str(vheal)}}" -f "Current HP: | {{min(hp, (vheal.total+ character().hp))}}/{{hp}}{{set_hp(min(hp, (vheal.total + character().hp)))}}" {{"-f \""+cc+("" if ds else " ("+str(hd)+")")+" | "+cc_str(cc)+"\"" if cc_exists(cc) else ""}} -color <color> -footer "Adventuring | PHB 186" {{"-f \"Spell Slots| "+slots_str(splvl)+"\"" if wlvl>0 else ""}}
 !g sr -h
 ```
 
